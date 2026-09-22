@@ -12,27 +12,36 @@ class Library:
     def list_books(self):
         for book in self.books:
             print(book)
-    ## find a book by its title
-    def find_book_by_title(self, title):
+    ## find book by class attribute, such as title, author, ISBN, or availability
+    ## availability should return a list of books that is available
+    def find_book_by_attribute(self, attribute, value):
         for book in self.books:
-            if book.title == title:
+            if hasattr(book, attribute) and getattr(book, attribute) == value:
+                if attribute == "availability":
+                    return [b for b in self.books if b.availability == value]
                 return book
         return None
-    ## find a book by its author
-    def find_book_by_author(self, author):
-        for book in self.books:
-            if book.author == author:
-                return book
-        return None
-    ## find a book by its ISBN
-    def find_book_by_ISBN(self, ISBN):
-        for book in self.books:
-            if book.ISBN == ISBN:
-                return book
-        return None
-    ## find a book by its availability
-    def find_book_by_availability(self, availability):
-        for book in self.books:
-            if book.availability == availability:
-                return book
-        return None
+    ## remove a book from the library collection
+    def remove_book(self, book):
+        if book in self.books:
+            self.books.remove(book)
+    ## checkout a book from the library
+    def checkout_book(self, book):
+        if book in self.books and book.availability:
+            book.availability = False
+            return True
+        return False
+    ## return a book or books to the library
+    def return_book(self, book):
+        if isinstance(book, list):
+            success = False
+            for b in book:
+                if b in self.books and not b.availability:
+                    b.availability = True
+                    success = True
+            return success
+        else:
+            if book in self.books and not book.availability:
+                book.availability = True
+                return True
+        return False
